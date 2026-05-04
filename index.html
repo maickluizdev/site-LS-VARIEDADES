@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LS Variedades | Cosméticos Naturais</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="main-nav" style="display: none;">
+        <div class="nav-container">
+            <div class="logo" style="cursor: pointer; display: flex; align-items: center;" onclick="app.showPage('home')">
+                <img src="logo.png" alt="LS Variedades" style="max-height: 60px; max-width: 200px; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span style="display:none; color: #5A4332; font-weight: 600; font-size: 1.5rem;">LS VARIEDADES</span>
+            </div>
+            <ul class="nav-links">
+                <li style="display: flex; align-items: center; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 5px 15px;">
+                    <input type="text" id="search-input" placeholder="Buscar..." style="border: none; background: transparent; outline: none; width: 120px; font-size: 0.9rem;" onkeyup="if(event.key === 'Enter') app.searchProducts()">
+                    <i class="fas fa-search" style="color: var(--text-light); cursor: pointer;" onclick="app.searchProducts()"></i>
+                </li>
+                <li><a href="#" onclick="app.showPage('cart')" style="position:relative;"><i class="fas fa-shopping-bag"></i><span id="cart-badge" style="position:absolute; top:-8px; right:-12px; background:var(--accent); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:10px; display:none;">0</span></a></li>
+                <li><a href="#" onclick="app.logoutUser()" title="Sair da Conta"><i class="fas fa-sign-out-alt"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Admin Tools (Hidden by default) -->
+    <div id="admin-tools" class="admin-panel glass" style="display: none; margin-top: 100px;">
+        <h3><i class="fas fa-tools"></i> Painel de Administração</h3>
+        <p>Você tem permissão para editar preços e adicionar produtos.</p>
+        <button class="btn btn-secondary" onclick="app.openAddProductModal()" style="margin-top: 15px;">+ Adicionar Produto</button>
+        <button class="btn btn-secondary" onclick="app.showPage('pedidos')" style="margin-top: 15px; margin-left: 10px; background: #9FB89F;"><i class="fas fa-box-open"></i> Ver Pedidos</button>
+        <button class="btn btn-outline" onclick="app.logoutUser()" style="margin-top: 15px; margin-left: 10px;">Sair da Conta Admin</button>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content glass">
+            <button class="close-modal" onclick="app.closeAddProductModal()">&times;</button>
+            <h2 style="margin-bottom: 20px; color: var(--text);">Novo Produto</h2>
+            <form id="add-product-form">
+                <input type="text" id="prod-name" class="input-field" placeholder="Nome do Produto" required>
+                <select id="prod-category" class="input-field" required>
+                    <option value="" disabled selected>Selecione a Categoria</option>
+                    <option value="feminino">Feminino</option>
+                    <option value="masculino">Masculino</option>
+                </select>
+                <textarea id="prod-desc" class="input-field" placeholder="Breve Descrição" rows="2" required></textarea>
+                <input type="number" id="prod-price" class="input-field" placeholder="Preço (R$)" step="0.01" required>
+                <label style="font-size: 0.8rem; color: var(--text-light);">Imagem do Produto:</label>
+                <input type="file" id="prod-img-file" accept="image/*" class="input-field">
+                <button type="submit" class="btn btn-primary">Salvar Produto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content glass">
+            <button class="close-modal" onclick="app.closeEditProductModal()">&times;</button>
+            <h2 style="margin-bottom: 20px; color: var(--text);">Editar Produto</h2>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-prod-id">
+                <input type="text" id="edit-prod-name" class="input-field" placeholder="Nome do Produto" required>
+                <textarea id="edit-prod-desc" class="input-field" placeholder="Breve Descrição" rows="2" required></textarea>
+                <input type="number" id="edit-prod-price" class="input-field" placeholder="Preço (R$)" step="0.01" required>
+                <label style="font-size: 0.8rem; color: var(--text-light);">Alterar Imagem (Opcional):</label>
+                <input type="file" id="edit-prod-img-file" accept="image/*" class="input-field">
+                <button type="submit" class="btn btn-primary">Atualizar Produto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content wrapper -->
+    <div id="main-content">
+
+        <!-- Login Page -->
+        <div id="page-login" class="page active">
+            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-color);">
+                <div class="glass" style="padding: 40px; width: 100%; max-width: 400px; text-align: center;">
+                    <img src="logo.png" alt="LS Variedades" style="max-height: 80px; margin-bottom: 20px;" onerror="this.style.display='none'">
+                    <h2 style="margin-bottom: 20px; color: var(--text);">Bem-vindo(a)</h2>
+                    
+                    <form id="customer-login-form">
+                        <input type="text" id="login-name" class="input-field" placeholder="Como você quer ser chamado?" style="display: none;">
+                        <input type="tel" id="login-whatsapp" class="input-field" placeholder="Seu WhatsApp (Ex: 73999999999)" style="display: none;">
+                        <input type="email" id="login-email" class="input-field" placeholder="Seu E-mail" required>
+                        <input type="password" id="login-pass" class="input-field" placeholder="Sua Senha" required>
+                        <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Entrar</button>
+                    </form>
+                    
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light);" id="login-toggle-text">Ainda não tem conta?</p>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 5px;" id="btn-login-toggle" onclick="app.toggleLoginMode()">Criar Nova Conta</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Home Page -->
+        <div id="page-home" class="page active">
+            <header class="hero">
+                <div class="hero-content">
+                    <div id="welcome-container" class="glass" style="display: inline-block; padding: 10px 25px; margin-bottom: 25px; border-radius: 30px; background: rgba(255, 255, 255, 0.4);">
+                        <p id="welcome-message" style="font-size: 1.2rem; font-weight: 600; color: #5A4332; margin: 0;"><i class="fas fa-sparkles" style="color: var(--accent); margin-right: 8px;"></i></p>
+                    </div>
+                    <h1>Sua beleza autêntica,<br>em tons suaves.</h1>
+                    <p>Descubra nossa nova linha de cuidados essenciais para ele e para ela.</p>
+                    <button class="btn btn-primary" onclick="app.showPage('feminino')" style="margin-right: 10px;">Coleção Feminina</button>
+                    <button class="btn btn-outline" onclick="app.showPage('masculino')" style="background: rgba(255,255,255,0.4); border-color: #5A4332; color: #5A4332; font-weight: 600;">Coleção Masculina</button>
+                </div>
+            </header>
+        </div>
+
+        <!-- Feminino Page -->
+        <div id="page-feminino" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Coleção Feminina</h2>
+                <div class="product-grid" id="grid-feminino">
+                    <!-- Injected via JS -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Masculino Page -->
+        <div id="page-masculino" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Coleção Masculina</h2>
+                <div class="product-grid" id="grid-masculino">
+                    <!-- Injected via JS -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Search Results Page -->
+        <div id="page-search" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Resultados da Busca</h2>
+                <div class="product-grid" id="grid-search">
+                    <!-- Injected via JS -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Cart Page -->
+        <div id="page-cart" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Meu Carrinho</h2>
+                <div class="glass" style="padding: 30px; max-width: 800px; margin: 0 auto;">
+                    <div id="cart-items">
+                        <!-- Injected via JS -->
+                    </div>
+                    <div style="border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; text-align: right;">
+                        <h3 style="font-size: 1.5rem; color: var(--primary);">Total: R$ <span id="cart-total">0,00</span></h3>
+                        <button class="btn btn-primary" style="margin-top: 20px; width: 100%; font-size: 1.2rem;" id="btn-checkout" onclick="app.showPage('checkout')">Confirmar Pedido</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Checkout Page -->
+        <div id="page-checkout" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Finalizar Compra</h2>
+                <div class="glass" style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                    <form id="checkout-form">
+                        <h4 style="margin-bottom: 15px; color: var(--text);">Endereço de Entrega</h4>
+                        <input type="tel" class="input-field" placeholder="CEP (Somente Uruçuca e Serra Grande)" required maxlength="9" oninput="app.maskCEP(this)">
+                        <input type="text" class="input-field" placeholder="Rua / Avenida" required>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="tel" class="input-field" placeholder="Número" style="flex: 1;" required oninput="this.value = this.value.replace(/\D/g, '')">
+                            <input type="text" class="input-field" placeholder="Complemento" style="flex: 2;">
+                        </div>
+                        <input type="text" class="input-field" placeholder="Bairro" required>
+                        <input type="text" id="checkout-cidade" class="input-field" placeholder="Cidade (Preenchimento Automático)" required readonly style="background-color: rgba(0,0,0,0.05); cursor: not-allowed; color: var(--text-light);">
+                        
+                        <h4 style="margin-top: 20px; margin-bottom: 15px; color: var(--text);">Finalizar com:</h4>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                            <button type="submit" onclick="window.selectedPayment = 'PIX'" class="btn btn-secondary" style="width: 100%; font-size: 1.1rem; background: #9FB89F;"><i class="fa-brands fa-whatsapp"></i> Concluir com PIX</button>
+                            <button type="submit" onclick="window.selectedPayment = 'Cartão de Crédito'" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;"><i class="fa-brands fa-whatsapp"></i> Concluir com Cartão de Crédito</button>
+                            <button type="submit" onclick="window.selectedPayment = 'Cartão de Débito'" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;"><i class="fa-brands fa-whatsapp"></i> Concluir com Cartão de Débito</button>
+                        </div>
+                        <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="app.showPage('cart')">Voltar ao Carrinho</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <!-- Orders Dashboard Page (Admin Only) -->
+        <div id="page-pedidos" class="page" style="display: none; padding-top: 100px;">
+            <main class="container">
+                <h2 class="section-title">Painel de Pedidos</h2>
+                <div class="glass" style="padding: 30px; max-width: 800px; margin: 0 auto;">
+                    <button class="btn btn-outline" style="margin-bottom: 20px;" onclick="app.showPage('home')">Voltar ao Início</button>
+                    <div id="orders-list">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div style="margin-bottom: 15px; display: flex; justify-content: center;">
+            <img src="logo.png" alt="LS Variedades" style="max-height: 60px; max-width: 200px; object-fit: contain;" onerror="this.style.display='none';">
+        </div>
+        <p>&copy; 2026 LS Variedades. Todos os direitos reservados. | Site feito por <a href="https://instagram.com/maick.bjj_" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">@maick.bjj_</a></p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast-container"></div>
+
+    <!-- Firebase SDK (Compat mode for Vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+
+    <script src="app.js"></script>
+</body>
+</html>
