@@ -25,10 +25,22 @@
                     <i class="fas fa-search" style="color: var(--text-light); cursor: pointer;" onclick="app.searchProducts()"></i>
                 </li>
                 <li><a href="#" onclick="app.showPage('cart')" style="position:relative; display:flex; align-items:center; gap:5px; font-weight: 500;"><i class="fas fa-shopping-bag"></i> Carrinho<span id="cart-badge" style="position:absolute; top:-8px; right:-20px; background:var(--accent); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:10px; display:none;">0</span></a></li>
-                <li><a href="#" onclick="app.logoutUser()" title="Sair da Conta"><i class="fas fa-sign-out-alt"></i></a></li>
+                <li style="margin-left: 10px;"><a href="#" onclick="app.toggleMenu()" title="Menu"><i class="fas fa-bars" style="font-size: 1.2rem;"></i></a></li>
             </ul>
         </div>
     </nav>
+
+    <!-- Hamburger Sidebar -->
+    <div id="hamburger-sidebar" class="sidebar">
+        <button class="close-sidebar" onclick="app.toggleMenu()">&times;</button>
+        <h3 style="margin-bottom: 30px; color: var(--primary);">Menu</h3>
+        <ul class="sidebar-links">
+            <li><a href="#" onclick="app.showPage('feminino'); app.toggleMenu();">Coleção Feminina</a></li>
+            <li><a href="#" onclick="app.showPage('masculino'); app.toggleMenu();">Coleção Masculina</a></li>
+            <li style="margin-top: 30px;"><a href="#" onclick="app.logoutUser()" style="color: #ff6b6b;"><i class="fas fa-sign-out-alt" style="width: 25px;"></i> Fazer Logoff</a></li>
+        </ul>
+    </div>
+    <div id="sidebar-overlay" onclick="app.toggleMenu()"></div>
 
 
     <!-- Admin Tools (Hidden by default) -->
@@ -111,8 +123,10 @@
                     </div>
                     <h1>Sua beleza autêntica,<br>em tons suaves.</h1>
                     <p>Descubra nossa nova linha de cuidados essenciais para ele e para ela.</p>
-                    <button class="btn btn-primary" onclick="app.showPage('feminino')" style="margin-right: 10px;">Coleção Feminina</button>
-                    <button class="btn btn-outline" onclick="app.showPage('masculino')" style="background: rgba(255,255,255,0.4); border-color: #5A4332; color: #5A4332; font-weight: 600;">Coleção Masculina</button>
+                    <div style="display: flex; flex-direction: column; gap: 15px; max-width: 280px; margin: 0 auto;">
+                        <button class="btn btn-primary" onclick="app.showPage('feminino')" style="width: 100%;">Coleção Feminina</button>
+                        <button class="btn btn-outline" onclick="app.showPage('masculino')" style="width: 100%; background: rgba(255,255,255,0.4); border-color: #5A4332; color: #5A4332; font-weight: 600;">Coleção Masculina</button>
+                    </div>
                 </div>
             </header>
         </div>

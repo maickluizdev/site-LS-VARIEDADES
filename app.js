@@ -63,6 +63,34 @@ const app = {
         }
     },
 
+    toggleMenu: () => {
+        const sidebar = document.getElementById('hamburger-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            setTimeout(() => overlay.style.display = 'none', 300);
+        } else {
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                sidebar.classList.add('open');
+                overlay.classList.add('open');
+            }, 10);
+        }
+    },
+
+    scrollToSection: (id) => {
+        app.showPage('home');
+        app.toggleMenu();
+        setTimeout(() => {
+            const el = document.getElementById(id);
+            if (el) {
+                const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+        }, 300);
+    },
+
     init: async () => {
         // Load products from Firestore
         db.collection('ls_products').onSnapshot(snapshot => {
