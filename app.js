@@ -49,6 +49,18 @@ const app = {
         if (pageId === 'pedidos') {
             app.renderOrders();
         }
+        app.updateNavbar();
+    },
+
+    updateNavbar: () => {
+        const nav = document.querySelector('.navbar');
+        const activePage = document.querySelector('.page.active');
+        if (activePage && activePage.id === 'page-home') {
+            if (window.scrollY > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        } else {
+            nav.classList.add('scrolled');
+        }
     },
 
     init: async () => {
@@ -113,6 +125,11 @@ const app = {
         // Render
         app.renderProducts();
         app.setupListeners();
+
+        window.addEventListener('scroll', () => {
+            app.updateNavbar();
+        });
+        app.updateNavbar();
     },
 
     saveProducts: () => {
@@ -135,6 +152,11 @@ const app = {
             }
             app.saveCart();
             app.showToast('Adicionado ao carrinho!');
+            
+            const badge = document.getElementById('cart-badge');
+            badge.classList.remove('bounce');
+            void badge.offsetWidth; // trigger reflow
+            badge.classList.add('bounce');
         }
     },
 
@@ -629,12 +651,12 @@ const app = {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
         toast.className = 'toast';
-        toast.innerText = msg;
+        toast.innerHTML = `<i class="fas fa-bell" style="margin-right:8px; color: var(--primary);"></i> ${msg}`;
         container.appendChild(toast);
         setTimeout(() => toast.classList.add('show'), 10);
         setTimeout(() => {
             toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
+            setTimeout(() => toast.remove(), 400);
         }, 3000);
     }
 };

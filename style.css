@@ -40,9 +40,15 @@ body {
     top: 0;
     width: 100%;
     height: 80px;
-    background: rgba(253, 251, 247, 0.85);
-    backdrop-filter: blur(10px);
+    background: transparent;
+    transition: all 0.4s ease;
     z-index: 100;
+    border-bottom: 1px solid transparent;
+}
+.navbar.scrolled {
+    background: rgba(253, 251, 247, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
@@ -180,12 +186,23 @@ body {
 
 /* Product Grid */
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 30px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px 10px 40px 10px; /* bottom padding to not cut off hover shadow */
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+.product-grid::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 .product-card {
+    flex: 0 0 280px; /* Fixa a largura do card no carrossel */
+    scroll-snap-align: center; /* Alinha no meio da tela no celular */
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
@@ -297,22 +314,45 @@ body {
 /* Toasts */
 #toast-container {
     position: fixed;
-    bottom: 20px; right: 20px;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
     z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .toast {
-    background: #fff;
-    color: var(--text);
+    background: var(--text);
+    color: var(--bg-color);
     padding: 15px 25px;
-    border-radius: 8px;
+    border-radius: 30px;
     margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    border-left: 4px solid var(--accent);
-    transform: translateX(120%);
-    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    font-weight: 500;
 }
 .toast.show {
-    transform: translateX(0);
+    transform: translateY(0);
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.page.active {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes bounceIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5) translateY(-3px); }
+    100% { transform: scale(1); }
+}
+.bounce {
+    animation: bounceIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 footer {
@@ -334,5 +374,17 @@ footer {
     }
     .logo {
         margin-right: 0;
+    }
+    .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 15px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .nav-links::-webkit-scrollbar {
+        display: none;
     }
 }
