@@ -399,21 +399,21 @@ const app = {
                 });
 
                 // Format WhatsApp Message
-                let waText = `*NOVO PEDIDO - LS VARIEDADES*%0A`;
-                waText += `*👤 Cliente:* ${customerName}%0A%0A`;
-                waText += `*📦 Itens:*%0A`;
+                let waText = `*NOVO PEDIDO - LS VARIEDADES*\n`;
+                waText += `*👤 Cliente:* ${customerName}\n\n`;
+                waText += `*📦 Itens:*\n`;
                 app.cart.forEach(item => {
-                    waText += `- ${item.qty}x ${item.name} (R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')})%0A`;
+                    waText += `- ${item.qty}x ${item.name} (R$ ${(item.price * item.qty).toFixed(2).replace('.', ',')})\n`;
                 });
-                waText += `%0A*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}%0A`;
-                waText += `*💳 Pagamento:* ${payment.toUpperCase()}%0A%0A`;
-                waText += `*📍 Endereço de Entrega:*%0A`;
-                waText += `CEP: ${address.cep}%0A`;
+                waText += `\n*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+                waText += `*💳 Pagamento:* ${payment.toUpperCase()}\n\n`;
+                waText += `*📍 Endereço de Entrega:*\n`;
+                waText += `CEP: ${address.cep}\n`;
                 waText += `${address.rua}, ${address.numero}`;
                 if (address.complemento) waText += ` - ${address.complemento}`;
-                waText += `%0A${address.bairro} - ${address.cidade}`;
+                waText += `\n${address.bairro} - ${address.cidade}`;
 
-                const waLink = `https://wa.me/5573981088236?text=${waText}`;
+                const waLink = `https://wa.me/5573981088236?text=${encodeURIComponent(waText)}`;
 
                 app.cart = [];
                 app.saveCart();
@@ -421,9 +421,8 @@ const app = {
                 app.showToast('Pedido Confirmado! Redirecionando para o WhatsApp...');
                 form.reset();
                 
-                setTimeout(() => {
-                    window.open(waLink, '_blank');
-                }, 1500);
+                // Redirecionamento direto para evitar bloqueio em celulares
+                window.location.href = waLink;
 
             } catch (error) {
                 app.showToast('Erro ao confirmar pedido: ' + error.message);
