@@ -19,14 +19,16 @@
                 <span style="display:none; color: #5A4332; font-weight: 600; font-size: 1.5rem;">LS VARIEDADES</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#" onclick="app.showPage('home')" style="font-weight: 500;"><i class="fas fa-home" style="margin-right:5px;"></i> Home</a></li>
+                <li><a href="#" onclick="app.showPage('home')" style="font-weight: 500;"><i class="fas fa-home"></i> <span class="nav-text">Home</span></a></li>
                 <li style="display: flex; align-items: center; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 5px 15px;">
                     <input type="text" id="search-input" placeholder="Buscar..." style="border: none; background: transparent; outline: none; width: 120px; font-size: 0.9rem;" onkeyup="if(event.key === 'Enter') app.searchProducts()">
                     <i class="fas fa-search" style="color: var(--text-light); cursor: pointer;" onclick="app.searchProducts()"></i>
                 </li>
-                <li><a href="#" onclick="app.showPage('cart')" style="position:relative; display:flex; align-items:center; gap:5px; font-weight: 500;"><i class="fas fa-shopping-bag"></i> Carrinho<span id="cart-badge" style="position:absolute; top:-8px; right:-20px; background:var(--accent); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:10px; display:none;">0</span></a></li>
-                <li style="margin-left: 10px;"><a href="#" onclick="app.toggleMenu()" title="Menu"><i class="fas fa-bars" style="font-size: 1.2rem;"></i></a></li>
+                <li><a href="#" onclick="app.showPage('cart')" style="position:relative; display:flex; align-items:center; gap:5px; font-weight: 500;"><i class="fas fa-shopping-bag"></i> <span class="nav-text">Carrinho</span><span id="cart-badge" style="position:absolute; top:-8px; right:-20px; background:var(--accent); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:10px; display:none;">0</span></a></li>
             </ul>
+            <div class="hamburger-btn" onclick="app.toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
     </nav>
 
@@ -44,12 +46,14 @@
 
 
     <!-- Admin Tools (Hidden by default) -->
-    <div id="admin-tools" class="admin-panel glass" style="display: none; margin-top: 100px;">
-        <h3><i class="fas fa-tools"></i> Painel de Administração</h3>
-        <p>Você tem permissão para editar preços e adicionar produtos.</p>
-        <button class="btn btn-secondary" onclick="app.openAddProductModal()" style="margin-top: 15px;">+ Adicionar Produto</button>
-        <button class="btn btn-secondary" onclick="app.showPage('pedidos')" style="margin-top: 15px; margin-left: 10px; background: #9FB89F;"><i class="fas fa-box-open"></i> Ver Pedidos</button>
-        <button class="btn btn-outline" onclick="app.logoutUser()" style="margin-top: 15px; margin-left: 10px;">Sair da Conta Admin</button>
+    <div id="admin-tools" class="admin-panel glass" style="display: none; margin-top: 160px; position: relative; z-index: 50;">
+        <h3 style="color: var(--text);"><i class="fas fa-tools"></i> Painel de Administração</h3>
+        <p style="color: var(--text-light);">Você tem permissão para editar preços e adicionar produtos.</p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+            <button class="btn btn-secondary" onclick="app.openAddProductModal()">+ Adicionar Produto</button>
+            <button class="btn btn-secondary" onclick="app.showPage('pedidos')" style="background: #9FB89F;"><i class="fas fa-box-open"></i> Ver Pedidos</button>
+            <button class="btn btn-outline" onclick="app.logoutUser()">Sair da Conta Admin</button>
+        </div>
     </div>
 
     <!-- Add Product Modal -->

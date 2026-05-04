@@ -55,7 +55,10 @@ const app = {
     updateNavbar: () => {
         const nav = document.querySelector('.navbar');
         const activePage = document.querySelector('.page.active');
-        if (activePage && activePage.id === 'page-home') {
+        const adminTools = document.getElementById('admin-tools');
+        const isAdminVisible = adminTools && adminTools.style.display !== 'none';
+
+        if (activePage && activePage.id === 'page-home' && !isAdminVisible) {
             if (window.scrollY > 50) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
         } else {
